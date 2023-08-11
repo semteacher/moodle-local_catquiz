@@ -15,12 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
-* Entities Class to display list of entity records.
-*
-* @package local_catquiz
-* @copyright 2023 Wunderbyte GmbH <info@wunderbyte.at>
-* @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * Entities Class to display list of entity records.
+ *
+ * @package local_catquiz
+ * @copyright 2023 Wunderbyte GmbH <info@wunderbyte.at>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 namespace local_catquiz\local\model;
 
@@ -54,7 +54,7 @@ class model_item_param {
 
     private int $status = 0;
 
-    private string $model_name;
+    private string $modelname;
 
     /**
      * Models that create items are free to use this field to store some metadata
@@ -67,10 +67,9 @@ class model_item_param {
      */
     private int $id;
 
-    public function __construct(int $id, string $model_name, array $metadata = [], int $status = self::STATUS_NOT_CALCULATED)
-    {
+    public function __construct(int $id, string $modelname, array $metadata = [], int $status = self::STATUS_NOT_CALCULATED) {
         $this->id = $id;
-        $this->model_name = $model_name;
+        $this->model_name = $modelname;
         $this->metadata = $metadata;
         $this->status = $status;
     }
@@ -136,14 +135,14 @@ class model_item_param {
         int $componentid,
         string $model,
         int $contextid,
-        stdClass $new_record
+        stdClass $newrecord
     ) {
         global $DB;
 
-        if (intval($new_record->status) === self::STATUS_SET_MANUALLY) {
+        if (intval($newrecord->status) === self::STATUS_SET_MANUALLY) {
             // Only one model can be the selected one. Set the status of all
-            //other models back to 0
-            $existing_items = $DB->get_record(
+            // other models back to 0
+            $existingitems = $DB->get_record(
                 'local_catquiz_itemparams',
                 [
                     'componentid' => $componentid,
@@ -152,37 +151,37 @@ class model_item_param {
                 ]
             );
             // Get item params for other models
-            $other_items = array_filter(
-                $existing_items,
+            $otheritems = array_filter(
+                $existingitems,
                 function($i) use ($model) {
                     return $i->model !== $model;
                 }
             );
-            foreach ($other_items as $other_item) {
-                $other_item->status = self::STATUS_NOT_CALCULATED;
-                $DB->update_record('local_catquiz_itemparams', $other_item, true);
+            foreach ($otheritems as $otheritem) {
+                $otheritem->status = self::STATUS_NOT_CALCULATED;
+                $DB->update_record('local_catquiz_itemparams', $otheritem, true);
             }
         }
 
-        $db_record = $DB->get_record(
+        $dbrecord = $DB->get_record(
             'local_catquiz_itemparams',
             [
                 'id' => $id,
             ]
         );
-        if (!$db_record) {
+        if (!$dbrecord) {
             throw new Exception('Can not update record because it does not exist');
         }
-        foreach ($new_record as $property => $value) {
+        foreach ($newrecord as $property => $value) {
             // Some properties should not be updated
             if (in_array($property, ['id', 'componentid'])) {
                 continue;
             }
-            $db_record->$property = $value;
+            $dbrecord->$property = $value;
         }
         $DB->update_record(
             'local_catquiz_itemparams',
-            $db_record
+            $dbrecord
         );
         cache_helper::purge_by_event('changesintestitems');
     }

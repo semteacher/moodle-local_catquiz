@@ -25,32 +25,30 @@
 
 namespace local_catquiz;
 
-class matrixcat
-{
-    //Gauss-Jordan elimination method for matrix inverse
-    public function inverseMatrix(array $matrix)
-    {
-        //TODO $matrix validation
+class matrixcat {
 
-        $matrixCount = count($matrix);
+    // Gauss-Jordan elimination method for matrix inverse
+    public function inversematrix(array $matrix) {
+        // TODO $matrix validation
 
-        $identityMatrix = $this->identityMatrix($matrixCount);
-        $augmentedMatrix = $this->appendIdentityMatrixToMatrix($matrix, $identityMatrix);
-        $inverseMatrixWithIdentity = $this->createInverseMatrix($augmentedMatrix);
-        $inverseMatrix = $this->removeIdentityMatrix($inverseMatrixWithIdentity);
+        $matrixcount = count($matrix);
 
-        return $inverseMatrix;
+        $identitymatrix = $this->identityMatrix($matrixcount);
+        $augmentedmatrix = $this->appendIdentityMatrixToMatrix($matrix, $identitymatrix);
+        $inversematrixwithidentity = $this->createInverseMatrix($augmentedmatrix);
+        $inversematrix = $this->removeIdentityMatrix($inversematrixwithidentity);
+
+        return $inversematrix;
     }
 
-    private function createInverseMatrix(array $matrix)
-    {
-        $numberOfRows = count($matrix);
+    private function createinversematrix(array $matrix) {
+        $numberofrows = count($matrix);
 
-        for($i=0; $i<$numberOfRows; $i++)
+        for($i = 0; $i < $numberofrows; $i++)
         {
             $matrix = @$this->oneOperation($matrix, $i, $i);
 
-            for($j=0; $j<$numberOfRows; $j++)
+            for($j = 0; $j < $numberofrows; $j++)
             {
                 if($i !== $j)
                 {
@@ -58,105 +56,99 @@ class matrixcat
                 }
             }
         }
-        $inverseMatrixWithIdentity = $matrix;
+        $inversematrixwithidentity = $matrix;
 
-        return $inverseMatrixWithIdentity;
+        return $inversematrixwithidentity;
     }
 
-    private function oneOperation(array $matrix, $rowPosition, $zeroPosition)
-    {
-        if($matrix[$rowPosition][$zeroPosition] !== 1)
+    private function oneoperation(array $matrix, $rowposition, $zeroposition) {
+        if($matrix[$rowposition][$zeroposition] !== 1)
         {
-            $numberOfCols = count($matrix[$rowPosition]);
+            $numberofcols = count($matrix[$rowposition]);
 
-            if($matrix[$rowPosition][$zeroPosition] === 0)
+            if($matrix[$rowposition][$zeroposition] === 0)
             {
                 $divisor = 0.0000000001;
-                $matrix[$rowPosition][$zeroPosition] = 0.0000000001;
+                $matrix[$rowposition][$zeroposition] = 0.0000000001;
             }
             else
             {
-                $divisor = $matrix[$rowPosition][$zeroPosition];
+                $divisor = $matrix[$rowposition][$zeroposition];
             }
 
-            for($i=0; $i<$numberOfCols; $i++)
+            for($i = 0; $i < $numberofcols; $i++)
             {
-                $matrix[$rowPosition][$i] = $matrix[$rowPosition][$i] / $divisor;
+                $matrix[$rowposition][$i] = $matrix[$rowposition][$i] / $divisor;
             }
         }
 
         return $matrix;
     }
 
-    private function zeroOperation(array $matrix, $rowPosition, $zeroPosition, $subjectRow)
-    {
-        $numberOfCols = count($matrix[$rowPosition]);
+    private function zerooperation(array $matrix, $rowposition, $zeroposition, $subjectrow) {
+        $numberofcols = count($matrix[$rowposition]);
 
-        if($matrix[$rowPosition][$zeroPosition] !== 0)
+        if($matrix[$rowposition][$zeroposition] !== 0)
         {
-            $numberToSubtract = $matrix[$rowPosition][$zeroPosition];
+            $numbertosubtract = $matrix[$rowposition][$zeroposition];
 
-            for($i=0; $i<$numberOfCols; $i++)
+            for($i = 0; $i < $numberofcols; $i++)
             {
-                $matrix[$rowPosition][$i] = $matrix[$rowPosition][$i] - $numberToSubtract * $matrix[$subjectRow][$i];
+                $matrix[$rowposition][$i] = $matrix[$rowposition][$i] - $numbertosubtract * $matrix[$subjectrow][$i];
             }
         }
 
         return $matrix;
     }
 
-    private function removeIdentityMatrix(array $matrix)
-    {
-        $inverseMatrix = array();
-        $matrixCount = count($matrix);
+    private function removeidentitymatrix(array $matrix) {
+        $inversematrix = array();
+        $matrixcount = count($matrix);
 
-        for($i=0; $i<$matrixCount; $i++)
+        for($i = 0; $i < $matrixcount; $i++)
         {
-            $inverseMatrix[$i] = array_slice($matrix[$i], $matrixCount);
+            $inversematrix[$i] = array_slice($matrix[$i], $matrixcount);
         }
 
-        return $inverseMatrix;
+        return $inversematrix;
     }
 
-    private function appendIdentityMatrixToMatrix(array $matrix, array $identityMatrix)
-    {
-        //TODO $matrix & $identityMatrix compliance validation (same number of rows/columns, etc)
+    private function appendidentitymatrixtomatrix(array $matrix, array $identitymatrix) {
+        // TODO $matrix & $identityMatrix compliance validation (same number of rows/columns, etc)
 
-        $augmentedMatrix = array();
+        $augmentedmatrix = array();
 
-        for($i=0; $i<count($matrix); $i++)
+        for($i = 0; $i < count($matrix); $i++)
         {
-            $augmentedMatrix[$i] = array_merge($matrix[$i], $identityMatrix[$i]);
+            $augmentedmatrix[$i] = array_merge($matrix[$i], $identitymatrix[$i]);
         }
 
-        return $augmentedMatrix;
+        return $augmentedmatrix;
     }
 
-    public function identityMatrix(int $size)
-    {
-        //TODO validate $size
+    public function identitymatrix(int $size) {
+        // TODO validate $size
 
-        $identityMatrix = array();
+        $identitymatrix = array();
 
-        for($i=0; $i<$size; $i++)
+        for($i = 0; $i < $size; $i++)
         {
-            for($j=0; $j<$size; $j++)
+            for($j = 0; $j < $size; $j++)
             {
                 if($i == $j)
                 {
-                    $identityMatrix[$i][$j] = 1;
+                    $identitymatrix[$i][$j] = 1;
                 }
                 else
                 {
-                    $identityMatrix[$i][$j] = 0;
+                    $identitymatrix[$i][$j] = 0;
                 }
             }
         }
 
-        return $identityMatrix;
+        return $identitymatrix;
     }
-    public function multiplyMatrices($matrix1, $matrix2)
-    {
+    public function multiplymatrices($matrix1, $matrix2) {
         $rows1 = count($matrix1);
         $cols1 = count($matrix1[0]);
         $rows2 = count($matrix2);
@@ -184,8 +176,7 @@ class matrixcat
         return $result;
     }
 
-    public function flattenArray($array)
-    {
+    public function flattenarray($array) {
         $result = [];
 
         foreach ($array as $element) {
@@ -206,7 +197,7 @@ class matrixcat
      * @throws \InvalidArgumentException
      * @return array
      */
-    public function subtractVectors($vector1, $vector2) {
+    public function subtractvectors($vector1, $vector2) {
         if (count($vector1) != count($vector2)) {
             throw new \InvalidArgumentException("Vectors should have the same length for subtraction");
         }
@@ -222,7 +213,7 @@ class matrixcat
     }
 
 
-    public function dist($vector1, $vector2){
+    public function dist($vector1, $vector2) {
         if (count($vector1) !== count($vector2)) {
             throw new \InvalidArgumentException('Vectors must have the same number of elements');
         }

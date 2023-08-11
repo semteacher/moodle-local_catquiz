@@ -34,10 +34,10 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class model_raschmodel extends model_model implements catcalc_item_estimator, catcalc_ability_estimator {
-    static function likelihood_1pl($person_ability, $item_difficulty ){
+    static function likelihood_1pl($personability, $itemdifficulty ) {
 
         $discrimination = 1; // hardcode override because of 1pl
-        return (1 / (1 + exp($discrimination * ($item_difficulty - $person_ability))));
+        return (1 / (1 + exp($discrimination * ($itemdifficulty - $personability))));
     }
 
     /**
@@ -47,19 +47,18 @@ abstract class model_raschmodel extends model_model implements catcalc_item_esti
      * @param model_person_param_list $person_params
      * @return model_item_param_list
      */
-    public function estimate_item_params(model_person_param_list $person_params): model_item_param_list
-    {
-        $estimated_item_params = new model_item_param_list();
-        foreach ($this->responses->get_item_response($person_params) as $item_id => $item_response) {
-            $parameters = $this->calculate_params($item_response);
+    public function estimate_item_params(model_person_param_list $personparams): model_item_param_list {
+        $estimateditemparams = new model_item_param_list();
+        foreach ($this->responses->get_item_response($personparams) as $itemid => $itemresponse) {
+            $parameters = $this->calculate_params($itemresponse);
             // Now create a new item difficulty object (param)
             $param = $this
-                ->create_item_param($item_id)
+                ->create_item_param($itemid)
                 ->set_parameters($parameters);
             // ... and append it to the list of calculated item difficulties
-            $estimated_item_params->add($param);
+            $estimateditemparams->add($param);
         }
-        return $estimated_item_params;
+        return $estimateditemparams;
     }
 
     /**
@@ -68,9 +67,9 @@ abstract class model_raschmodel extends model_model implements catcalc_item_esti
      * @param mixed $item_response
      * @return array
      */
-    abstract protected function calculate_params($item_response): array;
-    abstract public static function likelihood($x, array $item_params, float $item_response);
-    abstract public static function log_likelihood($x, array $item_params, float $item_response);
-    abstract public static function log_likelihood_p($x, array $item_params, float $item_response);
-    abstract public static function log_likelihood_p_p($x, array $item_params, float $item_response);
+    abstract protected function calculate_params($itemresponse): array;
+    abstract public static function likelihood($x, array $itemparams, float $itemresponse);
+    abstract public static function log_likelihood($x, array $itemparams, float $itemresponse);
+    abstract public static function log_likelihood_p($x, array $itemparams, float $itemresponse);
+    abstract public static function log_likelihood_p_p($x, array $itemparams, float $itemresponse);
 }

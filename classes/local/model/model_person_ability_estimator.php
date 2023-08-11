@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * 
+ *
  *
  * @package    local_catquiz
  * @copyright  2023 Wunderbyte GmbH <georg.maisser@wunderbyte.at>
@@ -45,9 +45,9 @@ abstract class model_person_ability_estimator {
 
     /**
      * Estimates person abilities
-     * 
+     *
      * @param model_item_param_list $item_param_list List of item parameters
      * @return model_person_param_list
      */
-    abstract public function get_person_abilities(model_item_param_list $item_param_list): model_person_param_list;
+    abstract public function get_person_abilities(model_item_param_list $itemparamlist): model_person_param_list;
 }

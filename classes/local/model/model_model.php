@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * 
+ *
  *
  * @package    local_catquiz
  * @copyright  2023 Wunderbyte GmbH <georg.maisser@wunderbyte.at>
@@ -39,14 +39,14 @@ abstract class model_model {
      */
     protected model_responses $responses;
 
-    protected string $model_name;
+    protected string $modelname;
 
     /**
      * Model-specific instantiation can go here.
      */
-    public function __construct(model_responses $responses, string $model_name) {
+    public function __construct(model_responses $responses, string $modelname) {
         $this->responses = $responses;
-        $this->model_name = $model_name;
+        $this->model_name = $modelname;
     }
 
     /**
@@ -60,10 +60,10 @@ abstract class model_model {
 
     /**
      * Helper to create a new item param
-     * 
+     *
      * @param int   $itemid
      * @param array $metadata Optional metadata
-     * @return model_item_param 
+     * @return model_item_param
      */
     protected function create_item_param(int $itemid, array $metadata = []): model_item_param {
         return new model_item_param($itemid, $this->model_name, $metadata);
@@ -72,23 +72,23 @@ abstract class model_model {
     /**
      * Executes the model-specific code to estimate item-parameters based
      * on the given person abilities.
-     * 
+     *
      * @param model_person_param_list $person_params
      * @return model_item_param_list
      */
-    abstract public function estimate_item_params(model_person_param_list $person_params): model_item_param_list;
+    abstract public function estimate_item_params(model_person_param_list $personparams): model_item_param_list;
 
     /**
      * Returns the paramter names of the model as strings
-     * 
+     *
      * @return string[]
      */
     abstract protected static function get_parameter_names(): array;
 
     /**
-     * @param float $person_ability 
-     * @param array<float> $params 
-     * @return mixed 
+     * @param float $person_ability
+     * @param array<float> $params
+     * @return mixed
      */
-    abstract public static function fisher_info(float $person_ability, array $params);
+    abstract public static function fisher_info(float $personability, array $params);
 }

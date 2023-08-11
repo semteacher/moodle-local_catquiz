@@ -15,12 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
-* Entities Class to display list of entity records.
-*
-* @package local_catquiz
-* @copyright 2023 Wunderbyte GmbH <info@wunderbyte.at>
-* @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ * Entities Class to display list of entity records.
+ *
+ * @package local_catquiz
+ * @copyright 2023 Wunderbyte GmbH <info@wunderbyte.at>
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 namespace local_catquiz\local\model;
 use ArrayAccess;
@@ -43,7 +43,7 @@ class model_person_param_list implements ArrayAccess, IteratorAggregate, Countab
     /**
      * @var array<model_person_param>
      */
-    private array $person_params;
+    private array $personparams;
 
     public function __construct() {
         $this->person_params = [];
@@ -60,7 +60,7 @@ class model_person_param_list implements ArrayAccess, IteratorAggregate, Countab
      */
     public static function load_from_db(int $contextid, int $catscaleid): self {
         global $DB;
-        $person_rows = $DB->get_records(
+        $personrows = $DB->get_records(
             'local_catquiz_personparams',
             [
                 'contextid' => $contextid,
@@ -68,26 +68,26 @@ class model_person_param_list implements ArrayAccess, IteratorAggregate, Countab
             ]
         );
 
-        $person_abilities = new model_person_param_list();
-        foreach ($person_rows as $r) {
+        $personabilities = new model_person_param_list();
+        foreach ($personrows as $r) {
             $p = new model_person_param($r->userid);
             $p->set_ability($r->ability);
-            $person_abilities->add($p);
+            $personabilities->add($p);
         }
 
-        return $person_abilities;
+        return $personabilities;
     }
 
     public function count(): int {
         return count($this->person_params);
     }
 
-    public function getIterator(): Traversable {
+    public function getiterator(): Traversable {
         return new ArrayIterator($this->person_params);
     }
 
-    public function add(model_person_param $person_param) {
-        $this->person_params[$person_param->get_id()] = $person_param;
+    public function add(model_person_param $personparam) {
+        $this->person_params[$personparam->get_id()] = $personparam;
     }
     public function offsetSet($offset, $value): void {
         if (is_null($offset)) {
@@ -121,8 +121,7 @@ class model_person_param_list implements ArrayAccess, IteratorAggregate, Countab
      *
      * @return array<float>
      */
-    public function get_values($sorted = false): array
-    {
+    public function get_values($sorted = false): array {
         $data = array_map(
             function (model_person_param $param) {
                 return $param->get_ability();
@@ -142,16 +141,16 @@ class model_person_param_list implements ArrayAccess, IteratorAggregate, Countab
     public function save_to_db(int $contextid, int $catscaleid) {
         global $DB;
         // Get existing records for the given contextid and model.
-        $existing_params_rows = $DB->get_records(
+        $existingparamsrows = $DB->get_records(
             'local_catquiz_personparams',
             [
                 'contextid' => $contextid,
                 'catscaleid' => $catscaleid,
             ]
         );
-        $existing_params = [];
-        foreach ($existing_params_rows as $r) {
-            $existing_params[$r->userid] = $r;
+        $existingparams = [];
+        foreach ($existingparamsrows as $r) {
+            $existingparams[$r->userid] = $r;
         };
 
         $records = array_map(
@@ -161,10 +160,10 @@ class model_person_param_list implements ArrayAccess, IteratorAggregate, Countab
                     !is_finite($ability)
                     || abs($ability) >= model_person_param::MODEL_POS_INF
                 ) {
-                    $updated_ability = $ability < 0
+                    $updatedability = $ability < 0
                         ? model_person_param::MODEL_NEG_INF
                         : model_person_param::MODEL_POS_INF;
-                    $param->set_ability($updated_ability);
+                    $param->set_ability($updatedability);
                 }
                 return [
                     'userid' => $param->get_id(),
@@ -176,28 +175,28 @@ class model_person_param_list implements ArrayAccess, IteratorAggregate, Countab
             $this->person_params
         );
 
-        $updated_records = [];
-        $new_records = [];
+        $updatedrecords = [];
+        $newrecords = [];
         $now = time();
         foreach ($records as $record) {
-            $is_existing_param = array_key_exists($record['userid'], $existing_params);
+            $isexistingparam = array_key_exists($record['userid'], $existingparams);
             // If record already exists, update it. Otherwise, insert a new record to the DB
-            if ($is_existing_param) {
-                $record['id'] = $existing_params[$record['userid']]->id;
+            if ($isexistingparam) {
+                $record['id'] = $existingparams[$record['userid']]->id;
                 $record['timemodified'] = $now;
-                $updated_records[] = $record;
+                $updatedrecords[] = $record;
             } else {
                 $record['timecreated'] = $now;
                 $record['timemodified'] = $now;
-                $new_records[] = $record;
+                $newrecords[] = $record;
             }
         }
 
-        if (!empty($new_records)) {
-            $DB->insert_records('local_catquiz_personparams', $new_records);
+        if (!empty($newrecords)) {
+            $DB->insert_records('local_catquiz_personparams', $newrecords);
         }
 
-        foreach ($updated_records as $r) {
+        foreach ($updatedrecords as $r) {
             $DB->update_record('local_catquiz_personparams', $r, true);
         }
     }

@@ -34,10 +34,10 @@ require_once($CFG->dirroot . '/local/catquiz/lib.php');
 
 /**
  * Class catcontext
- * 
+ *
  * Defines a set items and persons defined by different criteria such as:
  *  - Time (start date and end date)
- * 
+ *
  * @author Georg Maißer
  * @copyright 2023 Wunderbyte GmbH
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -166,7 +166,7 @@ class catcontext {
 
     /**
      * Returns data in the following format
-     * 
+     *
      * "1" => Array( //userid
      *     "comp1" => Array( // component
      *         "1" => Array( //questionid
@@ -195,7 +195,7 @@ class catcontext {
         foreach ($data as $row) {
             $entry = [
                 'fraction' => $row->fraction,
-                'max_fraction' =>  $row->maxfraction,
+                'max_fraction' => $row->maxfraction,
                 'min_fraction' => $row->minfraction,
                 'qtype' => $row->qtype,
                 'timestamp' => $row->timecreated,
@@ -285,8 +285,8 @@ class catcontext {
     public function get_strategy(int $catscaleid): model_strategy {
         $responses = self::create_response_from_db($this->id, $catscaleid);
         $options = json_decode($this->json, true) ?? [];
-        $saved_abilities = model_person_param_list::load_from_db($this->id, $catscaleid);
-        return new model_strategy($responses, $options, $saved_abilities);
+        $savedabilities = model_person_param_list::load_from_db($this->id, $catscaleid);
+        return new model_strategy($responses, $options, $savedabilities);
     }
 
     // Add a default context that contains all test items
@@ -316,7 +316,7 @@ class catcontext {
     /**
      * @return string
      */
-    public function getName() {
+    public function getname() {
         return $this->name;
     }
 }

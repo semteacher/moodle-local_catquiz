@@ -25,99 +25,97 @@
 
 namespace local_catquiz;
 
-class mathcat
-{
+class mathcat {
+
     static function newtonraphson_stable(
         $func,
         $derivative,
         $start = 0,
-        $min_inc = 0.0001,
-        $max_iter = 150,
+        $mininc = 0.0001,
+        $maxiter = 150,
         $max = 50
     ): float {
-        $return_val = 0.0;
-        $x_0 = $start;
-        $use_gauss = false;
-        $gauss_iter = 0;
+        $returnval = 0.0;
+        $x0 = $start;
+        $usegauss = false;
+        $gaussiter = 0;
 
         $m = 0;
         $std = 0.5;
 
-
-        for ($n = 1; $n < $max_iter; $n++) {
+        for ($n = 1; $n < $maxiter; $n++) {
             $diff = 0;
 
-            if ($use_gauss == true){
+            if ($usegauss == true){
 
-                $gauss_iter += 1;
-                if ($gauss_iter % 10 == 0){
-                    $func = mathcat::compose_plus($func, function($x) use ($n,$m,$std)  {
-                        return 1 * mathcat::gaussian_density_derivative1($x,$m,$std);
+                $gaussiter += 1;
+                if ($gaussiter % 10 == 0){
+                    $func = self::compose_plus($func, function($x) use ($n, $m, $std)  {
+                        return 1 * mathcat::gaussian_density_derivative1($x, $m, $std);
                     });
 
-                    $derivative = mathcat::compose_plus($derivative, function($x) use ($n,$m,$std){
-                        return 1 * mathcat::gaussian_density_derivative2($x,$m,$std);
+                    $derivative = self::compose_plus($derivative, function($x) use ($n, $m, $std){
+                        return 1 * mathcat::gaussian_density_derivative2($x, $m, $std);
                     });
-                    //$z_0 = $m;
-                    //$use_gauss = false;
+                    // $z_0 = $m;
+                    // $use_gauss = false;
                 }
             }
 
-            if ($derivative($x_0) != 0) {
-                $diff = -$func($x_0) / ($derivative($x_0));
+            if ($derivative($x0) != 0) {
+                $diff = -$func($x0) / ($derivative($x0));
             } else {
-                $use_gauss = true;
-                $x_0 = 0;
+                $usegauss = true;
+                $x0 = 0;
             }
 
-            #$diff  = - $func($x_0) / ($derivative($x_0)+0.001);
-            # $diff = -$func($x_0) / ($derivative($x_0) + 0.00000001);
-            //echo "Iteration:" . $n . "and diff: " . $diff . " x_0=" . $x_0 . " value: ". $func($x_0)  . "<br>";
-            $x_0 += $diff;
+            // $diff  = - $func($x_0) / ($derivative($x_0)+0.001);
+            // $diff = -$func($x_0) / ($derivative($x_0) + 0.00000001);
+            // echo "Iteration:" . $n . "and diff: " . $diff . " x_0=" . $x_0 . " value: ". $func($x_0)  . "<br>";
+            $x0 += $diff;
 
             // Restrict values to [-$max, $max] and stop if we get outside that interval
-            if (abs($x_0) > $max) {
-                if ($x_0 > 0) {
+            if (abs($x0) > $max) {
+                if ($x0 > 0) {
                     return $max;
                 }
                 return -$max;
             }
 
             if (abs($diff) > 10) {
-                $use_gauss = true;
-                $x_0 = 0;
+                $usegauss = true;
+                $x0 = 0;
             }
 
-            if ($n == $max_iter){  //debug!
+            if ($n == $maxiter){  // debug!
                 echo "not converging!";
             }
 
-            if (abs($diff) < $min_inc) {
+            if (abs($diff) < $mininc) {
                 break;
             }
         }
-        return $x_0;
+        return $x0;
     }
 
 
-    static function gaussian_density($x, $mean, $stdDeviation) {
-        $factor1 = 1 / sqrt(2 * M_PI * pow($stdDeviation, 2));
-        $factor2 = exp(-pow($x - $mean, 2) / (2 * pow($stdDeviation, 2)));
+    static function gaussian_density($x, $mean, $stddeviation) {
+        $factor1 = 1 / sqrt(2 * M_PI * pow($stddeviation, 2));
+        $factor2 = exp(-pow($x - $mean, 2) / (2 * pow($stddeviation, 2)));
         return $factor1 * $factor2;
     }
 
     static function gaussian_density_derivative1($x, $m, $std) {
-        //$factor1 = -($x - $mean) / pow($stdDeviation, 2);
-        //$factor2 = exp(-pow($x - $mean, 2) / (2 * pow($stdDeviation, 2)));
-        //return $factor1 * $factor2;
+        // $factor1 = -($x - $mean) / pow($stdDeviation, 2);
+        // $factor2 = exp(-pow($x - $mean, 2) / (2 * pow($stdDeviation, 2)));
+        // return $factor1 * $factor2;
 
-        return (exp(-(($m - $x)**2 / (2 * $std**2))) * ($m - $x))/(sqrt(2 * M_PI) * $std**3);
-
+        return (exp(-(($m - $x) ** 2 / (2 * $std ** 2))) * ($m - $x)) / (sqrt(2 * M_PI) * $std ** 3);
 
     }
 
     static function gaussian_density_derivative2($x, $m, $std) {
-        return (exp(-(($m - $x)**2/ (2 * $std **2))) * ($m**2 - $std**2 - 2 * $m * $x + $x**2))/(sqrt(2 * M_PI)*$std**5);
+        return (exp(-(($m - $x) ** 2 / (2 * $std ** 2))) * ($m ** 2 - $std ** 2 - 2 * $m * $x + $x ** 2)) / (sqrt(2 * M_PI) * $std ** 5);
     }
 
 
@@ -127,10 +125,9 @@ class mathcat
 
 
 
-    static function newtonraphson_numeric($f, $x0, $tolerance, $max_iterations = 150, $h = 0.001)
-    {
+    static function newtonraphson_numeric($f, $x0, $tolerance, $maxiterations = 150, $h = 0.001) {
 
-        for ($i = 0; $i < $max_iterations; $i++) {
+        for ($i = 0; $i < $maxiterations; $i++) {
             $fx0 = $f($x0);
             $dfx0 = ($f($x0 + $h) - $f($x0 - $h)) / (2 * $h);
 
@@ -143,44 +140,40 @@ class mathcat
             if (abs($x1 - $x0) < $tolerance) {
                 return $x1;
             }
-            //echo "Iteration:" . $i . "and diff: " . $x1 - $x0 . " x_0=" . $x1 . " value: ". $f($x1)  . "<br>";
+            // echo "Iteration:" . $i . "and diff: " . $x1 - $x0 . " x_0=" . $x1 . " value: ". $f($x1)  . "<br>";
             $x0 = $x1;
         }
 
         return $x0;
     }
 
-    static function get_numerical_derivative(callable $func, float $h = 1e-5)
-    {
+    static function get_numerical_derivative(callable $func, float $h = 1e-5) {
         $returnfn = function ($x) use ($func, $h) {
             return ($func($x + $h) - $func($x)) / $h;
         };
         return $returnfn;
     }
 
-    static function get_numerical_derivative2(callable $func, float $h = 1e-6)
-    {
+    static function get_numerical_derivative2(callable $func, float $h = 1e-6) {
         $returnfn = function ($x) use ($func, $h) {
             return ($func($x + $h) - $func($x - $h)) / (2 * $h);
         };
         return $returnfn;
     }
 
-    static function gradient(callable $func, $point, $delta = 1e-5)
-    {
+    static function gradient(callable $func, $point, $delta = 1e-5) {
         $grad = [];
         for ($i = 0; $i < count($point); $i++) {
-            $point_plus_delta = $point;
-            $point_minus_delta = $point;
-            $point_plus_delta[$i] += $delta;
-            $point_minus_delta[$i] -= $delta;
-            $grad[$i] = ($func($point_plus_delta) - $func($point_minus_delta)) / (2 * $delta);
+            $pointplusdelta = $point;
+            $pointminusdelta = $point;
+            $pointplusdelta[$i] += $delta;
+            $pointminusdelta[$i] -= $delta;
+            $grad[$i] = ($func($pointplusdelta) - $func($pointminusdelta)) / (2 * $delta);
         }
         return $grad;
     }
 
-    static function matrix_vector_product($matrix, $vector)
-    {
+    static function matrix_vector_product($matrix, $vector) {
         $result = [];
         for ($i = 0; $i < count($matrix); $i++) {
             $result[$i] = 0;
@@ -191,197 +184,187 @@ class mathcat
         return $result;
     }
 
-    static function bfgs(callable $func, $start_point, $step_size = 0.01, $tolerance = 1e-6, $max_iterations = 1000)
-    {
-        $n = count($start_point);
-        $current_point = $start_point;
+    static function bfgs(callable $func, $startpoint, $stepsize = 0.01, $tolerance = 1e-6, $maxiterations = 1000) {
+        $n = count($startpoint);
+        $currentpoint = $startpoint;
         $iteration = 0;
-        $H = array();
+        $h = array();
 
         // Initialize H with the identity matrix
         for ($i = 0; $i < $n; $i++) {
-            $H[$i] = array();
+            $h[$i] = array();
             for ($j = 0; $j < $n; $j++) {
-                $H[$i][$j] = $i == $j ? 1 : 0;
+                $h[$i][$j] = $i == $j ? 1 : 0;
             }
         }
 
-        while ($iteration < $max_iterations) {
-            $grad = self::gradient($func, $current_point);
-            $direction = self::matrix_vector_product($H, $grad);
+        while ($iteration < $maxiterations) {
+            $grad = self::gradient($func, $currentpoint);
+            $direction = self::matrix_vector_product($h, $grad);
 
             for ($i = 0; $i < $n; $i++) {
                 $direction[$i] = -$direction[$i];
             }
 
             // Line search with constant step size
-            $next_point = [];
+            $nextpoint = [];
             for ($i = 0; $i < $n; $i++) {
-                $next_point[$i] = $current_point[$i] + $step_size * $direction[$i];
+                $nextpoint[$i] = $currentpoint[$i] + $stepsize * $direction[$i];
             }
 
             // Update H using BFGS formula
             $s = [];
             $y = [];
             for ($i = 0; $i < $n; $i++) {
-                $s[$i] = $next_point[$i] - $current_point[$i];
-                $y[$i] = self::gradient($func, $next_point)[$i] - $grad[$i];
+                $s[$i] = $nextpoint[$i] - $currentpoint[$i];
+                $y[$i] = self::gradient($func, $nextpoint)[$i] - $grad[$i];
             }
 
             $rho = 1 / array_sum(array_map(function ($yi, $si) {
                     return $yi * $si;
-                }, $y, $s));
+            }, $y, $s));
 
-            $I = [];
+            $i = [];
             for ($i = 0; $i < $n; $i++) {
-                $I[$i] = array();
+                $i[$i] = array();
                 for ($j = 0; $j < $n; $j++) {
-                    $I[$i][$j] = $i == $j ? 1 : 0;
+                    $i[$i][$j] = $i == $j ? 1 : 0;
                 }
             }
 
-            $A1 = [];
+            $a1 = [];
             for ($i = 0; $i < $n; $i++) {
-                $A1[$i] = array();
+                $a1[$i] = array();
                 for ($j = 0; $j < $n; $j++) {
-                    $A1[$i][$j] = $I[$i][$j] - $rho * $s[$i] * $y[$j];
+                    $a1[$i][$j] = $i[$i][$j] - $rho * $s[$i] * $y[$j];
                 }
             }
 
-            $A2 = [];
+            $a2 = [];
             for ($i = 0; $i < $n; $i++) {
-                $A2[$i] = array();
+                $a2[$i] = array();
                 for ($j = 0; $j < $n; $j++) {
-                    $A2[$i][$j] = $I[$i][$j] - $rho * $y[$i] * $s[$j];
+                    $a2[$i][$j] = $i[$i][$j] - $rho * $y[$i] * $s[$j];
                 }
             }
 
-            $H_new = [];
+            $hnew = [];
             for ($i = 0; $i < $n; $i++) {
-                $H_new[$i] = array();
+                $hnew[$i] = array();
                 for ($j = 0; $j < $n; $j++) {
-                    $H_new[$i][$j] = $A1[$i][$j] * $H[$j][$i] * $A2[$j][$i] + $rho * $s[$i] * $s[$j];
+                    $hnew[$i][$j] = $a1[$i][$j] * $h[$j][$i] * $a2[$j][$i] + $rho * $s[$i] * $s[$j];
                 }
             }
 
-            $H = $H_new;
+            $h = $hnew;
 
             // Check for convergence
             $diff = 0;
-            for ($i = 0; $i < count($current_point); $i++) {
-                $diff += abs($next_point[$i] - $current_point[$i]);
+            for ($i = 0; $i < count($currentpoint); $i++) {
+                $diff += abs($nextpoint[$i] - $currentpoint[$i]);
             }
 
             if ($diff < $tolerance) {
                 break;
             }
 
-            $current_point = $next_point;
+            $currentpoint = $nextpoint;
             $iteration++;
         }
 
-        return $current_point;
+        return $currentpoint;
     }
 
-    static function newton_raphson_multi($func, $derivative, $start, $min_inc = 0.0001, $max_iter = 2000)
-    {
-        $model_dim = count($func);
+    static function newton_raphson_multi($func, $derivative, $start, $mininc = 0.0001, $maxiter = 2000) {
+        $modeldim = count($func);
 
         $ml = new matrixcat();
         // get real jacobian/hessian
 
-        $z_0 = $start;
-        $parameter_names = array_keys($z_0);
-
-
+        $z0 = $start;
+        $parameternames = array_keys($z0);
 
         // jacobian, hessian, model_dim, start_value
 
+        for ($i = 0; $i < $maxiter; $i++) {
 
-        for ($i = 0; $i < $max_iter; $i++) {
+            for ($k = 0; $k <= $modeldim - 1; $k++) {
 
-            for ($k = 0; $k <= $model_dim-1; $k++) {
+                $realfunc[$k] = [$func[$k]($z0)];
 
-                $real_func[$k] = [$func[$k]($z_0)];
-
-                for ($j = 0; $j <= $model_dim-1; $j++) {
-                    $real_derivative[$k][$j] = $derivative[$k][$j]($z_0);
+                for ($j = 0; $j <= $modeldim - 1; $j++) {
+                    $realderivative[$k][$j] = $derivative[$k][$j]($z0);
                 }
             }
 
+            $g = $realfunc;
+            $j = $realderivative;
 
-            $G = $real_func;
-            $J = $real_derivative;
+            $jinv = $ml->inverseMatrix($j);
 
-            $j_inv = $ml->inverseMatrix($J);
-
-            if (is_array($z_0)){
+            if (is_array($z0)){
 
             } else {
-                $z_1 = $z_0 - $ml->flattenArray($ml->multiplyMatrices($j_inv, $G))[0];
-                $dist = abs($z_0 - $z_1);
+                $z1 = $z0 - $ml->flattenArray($ml->multiplyMatrices($jinv, $g))[0];
+                $dist = abs($z0 - $z1);
             }
 
-
-
-
-
-            if ($dist < $min_inc){
-                return array_combine($parameter_names, $z_1);
+            if ($dist < $mininc){
+                return array_combine($parameternames, $z1);
             }
-            $z_0 = array_combine($parameter_names, $z_1);
+            $z0 = array_combine($parameternames, $z1);
         }
 
-        return $z_0;
+        return $z0;
     }
 
     static function newton_raphson_multi_stable(
         $func,
         $derivative,
         $start,
-        $min_inc = 0.0001,
-        $max_iter = 2000,
+        $mininc = 0.0001,
+        $maxiter = 2000,
         catcalc_item_estimator $model
     ) {
-        $model_dim = count($func);
+        $modeldim = count($func);
         $ml = new matrixcat();
-        $z_0 = $start;
-        $parameter_names = array_keys($z_0);
+        $z0 = $start;
+        $parameternames = array_keys($z0);
 
         // jacobian, hessian, model_dim, start_value
-        for ($i = 0; $i < $max_iter; $i++) {
-            for ($k = 0; $k <= $model_dim - 1; $k++) {
-                $real_func[$k] = [$func[$k]($z_0)];
-                for ($j = 0; $j <= $model_dim - 1; $j++) {
-                    $real_derivative[$k][$j] = $derivative[$k][$j]($z_0);
+        for ($i = 0; $i < $maxiter; $i++) {
+            for ($k = 0; $k <= $modeldim - 1; $k++) {
+                $realfunc[$k] = [$func[$k]($z0)];
+                for ($j = 0; $j <= $modeldim - 1; $j++) {
+                    $realderivative[$k][$j] = $derivative[$k][$j]($z0);
                 }
             }
 
-            $G = $real_func;
-            $J = $real_derivative;
-            $matrix = new matrix($J);
-            $j_inv = ($matrix->getRows() === 1 && $matrix->isSquare())
-                ? [[1 / $J[0][0]]]
+            $g = $realfunc;
+            $j = $realderivative;
+            $matrix = new matrix($j);
+            $jinv = ($matrix->getRows() === 1 && $matrix->isSquare())
+                ? [[1 / $j[0][0]]]
                 : $matrix->inverse();
 
-            if (is_array($z_0)) {
-                $diff = $ml->flattenArray($ml->multiplyMatrices($j_inv, $G));
-                $z_1 = $ml->subtractVectors(array_values($z_0), $diff);
-                $dist = $ml->dist(array_values($z_0), $z_1);
+            if (is_array($z0)) {
+                $diff = $ml->flattenArray($ml->multiplyMatrices($jinv, $g));
+                $z1 = $ml->subtractVectors(array_values($z0), $diff);
+                $dist = $ml->dist(array_values($z0), $z1);
             } else {
-                $z_1 = array_values($z_0) - $ml->flattenArray($ml->multiplyMatrices($j_inv, $G))[0];
-                $dist = abs(array_values($z_0) - $z_1);
+                $z1 = array_values($z0) - $ml->flattenArray($ml->multiplyMatrices($jinv, $g))[0];
+                $dist = abs(array_values($z0) - $z1);
             }
 
             // If one of the values is NAN, return the values restricted to the trusted region
-            if (count(array_filter($z_1, fn ($x) => is_nan($x))) > 0) {
-                $z_1 = $model->restrict_to_trusted_region($z_0);
+            if (count(array_filter($z1, fn ($x) => is_nan($x))) > 0) {
+                $z1 = $model->restrict_to_trusted_region($z0);
                 echo "returning restricted value\n";
-                return array_combine($parameter_names, $z_1);
+                return array_combine($parameternames, $z1);
             }
 
-            $is_critical = $model->restrict_to_trusted_region($z_0) !== $z_0;
-            if ($is_critical) {
+            $iscritical = $model->restrict_to_trusted_region($z0) !== $z0;
+            if ($iscritical) {
                 foreach (array_keys($func) as $i) {
                     $func[$i] = self::compose_plus(
                         $model->get_log_tr_jacobian()[$i],
@@ -396,52 +379,49 @@ class mathcat
                 }
             }
 
-            $z_0 = array_combine($parameter_names, $z_1);
-            if ($dist < $min_inc) {
-                return $z_0;
+            $z0 = array_combine($parameternames, $z1);
+            if ($dist < $mininc) {
+                return $z0;
             }
         }
 
-        return $z_0;
+        return $z0;
     }
 
 
-    private static function add_gauss_der1(callable $func, $mean, $std){
+    private static function add_gauss_der1(callable $func, $mean, $std) {
 
-        $gaussian = function($x) use ($mean,$std)  {
-            return 1 * self::gaussian_density_derivative1($x,$mean,$std);
+        $gaussian = function($x) use ($mean, $std)  {
+            return 1 * self::gaussian_density_derivative1($x, $mean, $std);
         };
-        $new_func = self::compose_plus($func, $gaussian);
-        return $new_func;
+        $newfunc = self::compose_plus($func, $gaussian);
+        return $newfunc;
     }
 
-    private static function add_gauss_der2(callable $func, $mean, $std){
+    private static function add_gauss_der2(callable $func, $mean, $std) {
 
-        $gaussian = function($x) use ($mean,$std)  {
-            return 1 * self::gaussian_density_derivative2($x,$mean,$std);
+        $gaussian = function($x) use ($mean, $std)  {
+            return 1 * self::gaussian_density_derivative2($x, $mean, $std);
         };
-        $new_func = self::compose_plus($func,$gaussian);
-        return $new_func;
+        $newfunc = self::compose_plus($func, $gaussian);
+        return $newfunc;
     }
 
-    static function compose_plus($function1, $function2)
-    {
+    static function compose_plus($function1, $function2) {
         $returnfn = function ($x) use ($function1, $function2) {
             return $function1($x) + $function2($x);
         };
         return $returnfn;
     }
 
-    static function compose_multiply($function1, $function2)
-    {
+    static function compose_multiply($function1, $function2) {
         $returnfn = function ($x) use ($function1, $function2) {
             return $function1($x) * $function2($x);
         };
         return $returnfn;
     }
 
-    static function compose_chain($function1, $function2)
-    {
+    static function compose_chain($function1, $function2) {
         $returnfn = function ($x) use ($function1, $function2) {
             return $function1($function2);
         };
