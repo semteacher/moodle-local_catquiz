@@ -180,8 +180,8 @@ class feedbackclass {
                 $element = $mform->addElement(
                     'text',
                     'feedback_scaleid_limit_lower_'. $scale->id . '_' . $j,
-                     get_string('lowerlimit', 'local_catquiz'
-                ));
+                    get_string('lowerlimit', 'local_catquiz'),
+                    ['data-name' => 'feedback_scaleid_limit_lower_' . $scale->name . '_' . $j, 'data-depth' => $scale->depth]);
                 $mform->settype('feedback_scaleid_limit_lower_'. $scale->id . '_' . $j, PARAM_FLOAT);
 
                 // If the Element is new, we set the default.
@@ -196,8 +196,8 @@ class feedbackclass {
                 $element = $mform->addElement(
                     'text',
                     'feedback_scaleid_limit_upper_'. $scale->id . '_' . $j,
-                    get_string('upperlimit', 'local_catquiz'
-                ));
+                    get_string('upperlimit', 'local_catquiz'),
+                    ['data-name' => 'feedback_scaleid_limit_upper_' . $scale->name . '_' . $j, 'data-depth' => $scale->depth]);
                 $mform->settype('feedback_scaleid_limit_upper_' . $scale->id . '_' . $j, PARAM_FLOAT);
 
                 // If the Element is new, we set the default.
