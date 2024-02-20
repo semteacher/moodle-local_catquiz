@@ -109,7 +109,8 @@ class local_catquiz_generator extends testing_module_generator {
         // Force catmodel to adaptivequiz 1st.
         $DB->set_field('adaptivequiz', 'catmodel', $adaptivequiz->catmodel, ['id' => $adaptivequiz->adaptivecatquizid]);
 
-        // TODO: create correct json somehow. One from phpunittests does not mutch dynamic IDs in behat.
+        // Load pre-configured settings from JSON (without feedbacks for now).
+        // TODO: to have fully configured json need to determine how to avoid static IDs for feebback and other items in it.
         $json = file_get_contents(__DIR__ . '/../fixtures/testenvironmentdummy.json');
         $jsondata = json_decode($json);
 
@@ -140,6 +141,7 @@ class local_catquiz_generator extends testing_module_generator {
 
         // Setup testenv finally.
         $testenvironment = new testenvironment($jsondata);
+        $testenvironment->apply_jsonsaved_values($jsondata);
         $testenvironment->save_or_update();
         catquiz_handler::prepare_attempt_caches();
     }
