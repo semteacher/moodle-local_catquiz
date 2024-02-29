@@ -59,8 +59,10 @@ Feature: As a admin I want to manage CAT scales along with obtained attempts dat
   @javascript
   Scenario: Catscales management: Review catscales when attempt data exist
     Given I log in as "admin"
-    And I press "Catquiz"
     And I wait until the page is ready
+    And I press "Catquiz"
+    ##And I wait until the page is ready
+    And I wait "2" seconds
     ## Verify Summary tab
     And I should see "7 of 7 records found" in the ".eventlogtable" "css_element"
     And I should see "Student1 Test" in the "#eventlogtable_r1" "css_element"
