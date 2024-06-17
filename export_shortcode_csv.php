@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 //
-// Based on <https://gist.github.com/kralo/293dbc07b9b318eabe43>.
+// Based on https://gist.github.com/kralo/293dbc07b9b318eabe43.
 
 /**
  * Attempts CSV export
