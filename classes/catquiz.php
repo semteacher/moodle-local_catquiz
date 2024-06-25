@@ -2313,4 +2313,39 @@ class catquiz {
             ORDER BY attemptid DESC";
         return [$sql, $params];
     }
+
+    /**
+     * Helper function to get the module from a module id.
+     *
+     * @return stdClass
+     */
+    public static function get_module(int $moduleid) {
+        global $DB;
+        return $DB->get_record('modules', ['id' => $moduleid]);
+    }
+
+    /**
+     * Delete tests of the given module and instanceid
+     *
+     * @param int $instanceid
+     * @param string $module
+     * @return void
+     */
+    public static function delete_tests_of_course_module(int $instanceid, string $module) {
+        global $DB;
+        $modulename = sprintf('mod_%s', $module);
+        $DB->delete_records('local_catquiz_tests', ['componentid' => $instanceid, 'component' => $modulename]);
+    }
+
+    /**
+     * Delete attempts of the given course module
+     *
+     * @param int $instanceid
+     * @param string $module
+     * @return void
+     */
+    public static function delete_attempts_of_course_module(int $instanceid, string $module) {
+        global $DB;
+        $DB->delete_records('local_catquiz_attempts', ['instanceid' => $instanceid, 'component' => $module]);
+    }
 }

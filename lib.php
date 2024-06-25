@@ -21,6 +21,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use local_catquiz\catquiz;
+
 // Define constants.
 define('LOCAL_CATQUIZ_STATUS_SUBSCRIPTION_BOOKED', 1);
 define('LOCAL_CATQUIZ_STATUS_SUBSCRIPTION_DELETED', 0);
@@ -137,4 +139,26 @@ function local_catquiz_render_navbar_output(\renderer_base $renderer) {
  */
 function local_catquiz_coursemodule_standard_elements($fromform, $fields) {
 
+}
+
+/**
+ * If a course module is deleted, make sure that the corresponding catquiz data are also deleted
+ *
+ * @param stdClass $cm
+ * @return void
+ */
+function local_catquiz_pre_course_module_delete(stdClass $cm) {
+    $module = intval($cm->module); // E.g. 26.
+    // Check if this is a course module that contains catquiz data.
+    if (!$module = catquiz::get_module($cm->module)) {
+        return;
+    }
+
+    $supportedmodules = ['adaptivequiz'];
+    if (!in_array($module->name, $supportedmodules)) {
+        return;
+    }
+
+    catquiz::delete_tests_of_course_module($cm->instance, $module->name);
+    catquiz::delete_attempts_of_course_module($cm->instance, $module->name);
 }
