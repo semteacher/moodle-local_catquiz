@@ -2319,6 +2319,7 @@ class catquiz {
     /**
      * Helper function to get the module from a module id.
      *
+     * @param int $moduleid
      * @return stdClass
      */
     public static function get_module(int $moduleid) {
