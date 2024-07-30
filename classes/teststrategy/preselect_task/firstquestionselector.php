@@ -276,7 +276,7 @@ class firstquestionselector extends preselect_task implements wb_middleware {
      * @return bool
      */
     protected function has_ability() {
-        boolval(catquiz::get_person_abilities(
+        return boolval(catquiz::get_person_abilities(
             $this->context['contextid'],
             [$this->context['catscaleid']],
             [$this->context['userid']]
@@ -320,7 +320,7 @@ class firstquestionselector extends preselect_task implements wb_middleware {
             self::LEVEL_VERYDIFFICULT,
         ];
         if (!in_array($option, $knownlevels)) {
-            throw new \Exception(sprintf("Unknown option to select first question: %s"), $option);
+            throw new \Exception(sprintf("Unknown option to select first question: %s", $option));
         }
         return $mean + intval($option) * $se;
     }
